@@ -6,13 +6,15 @@ import {
     FileInput
 } from './dropzone.styles'
 
-const Dropzone = ({onFilesRecieved}) => {
+const Dropzone = ({onFilesRecieved, disabled}) => {
 
     const fileInputRef = React.createRef();
 
-    const [dropzoneStatus, setDropzoneStatus] = React.useState({disabled: false});
+    const [dropzoneStatus, setDropzoneStatus] = React.useState({
+        highlight: false
+    });
 
-    const {disabled} = dropzoneStatus
+    const {highlight} = dropzoneStatus
 
     const openFileDialog = () => {
         if (disabled) return;
@@ -30,17 +32,41 @@ const Dropzone = ({onFilesRecieved}) => {
         return Object.keys(list).map(key => list[key])
     }
 
+    const onDragOver = (event) => {
+        event.preventDefault();
+        if (disabled) return
+        setDropzoneStatus({...dropzoneStatus, highlight: true})
+    }
+
+    const onDragLeave = () => {
+        setDropzoneStatus({...dropzoneStatus, highlight: false})
+    }
+
+    const onDrop = (event) => {
+        event.preventDefault();
+        if (disabled) return;
+        const files = event.dataTransfer.files;
+        const filesArray = fileListToArray(files);
+        onFilesRecieved(filesArray);
+        setDropzoneStatus({...dropzoneStatus, highlight: false})
+    }
+
     return(
-        <DropzoneContainer>
-            <IconContainer alt='upload' src='/cloud-upload.svg' disabled={disabled}
-                onClick={openFileDialog}
-            />
+        <DropzoneContainer
+            onClick={openFileDialog}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            disabled={disabled}
+            highlight={highlight}
+        >
             <FileInput 
                 ref={fileInputRef}
                 type='file'
                 multiple
                 onChange={onFilesAdded}
             />
+            <IconContainer alt='upload' src='/cloud-upload.svg' highlight={highlight} />
             <span>Upload Files</span>
         </DropzoneContainer>
     )

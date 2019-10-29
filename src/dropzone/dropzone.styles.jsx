@@ -4,14 +4,14 @@ export const DropzoneContainer = styled.div`
     height: 200px;
     width: 200px;
     background-color: #fff;
-    border: 2px dashed rgb(187, 186, 186);
+    border: 2px dashed ${({highlight}) => highlight ? 'rgb(188, 185, 236)' : 'rgb(187, 186, 186)'};
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     font-size: 16px;
-    cursor: ${({disabled}) => disabled ? `default` : `pointer`  }
+    cursor: ${({disabled}) => disabled ? 'default' : 'pointer'};
 `
 
 export const IconContainer = styled.img`
